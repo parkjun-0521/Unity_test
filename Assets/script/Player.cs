@@ -17,18 +17,25 @@ public class Player : MonoBehaviour
     public int jumpPower;
 
     [Header("Player_Attack")]
-    bool fDown;
+    public bool fDown;
     public float curDelay;
     public float maxDelay;
     bool isFireReady = true;
-    public static int damage;
+
+    [Header("Player_Condition")]
+    public int health;
+    public int damage;
 
     bool isBorder;
 
     Rigidbody rigid;
+    game2Manager game2_Manager;
     // Start is called before the first frame update
-    void Start()
+
+    void Awake()
     {
+        game2_Manager = GameObject.Find("Main Camera").GetComponent<game2Manager>();
+        game2_Manager.PlayerDataReceive();
         rigid = GetComponent<Rigidbody>();
     }
 
@@ -68,12 +75,11 @@ public class Player : MonoBehaviour
     {
         if (jDown && !jumpCheck) {
             rigid.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
-
             jumpCheck = true;
         }
     }
 
-    void Attack()
+    public void Attack()
     {
         // 공격 텀 시간 
         curDelay += Time.deltaTime;
@@ -82,9 +88,11 @@ public class Player : MonoBehaviour
 
         if (fDown && isFireReady) {
             GameObject.Find("Player").transform.Find("Attack_Range").gameObject.SetActive(true);
-            damage = 20;
+            damage += 1;
+            // 데이터 베이스에 데이터 추가 
+            game2_Manager.PlayerConditionFunc();
             curDelay = 0;
-            Invoke("End", 0.5f);
+            Invoke("End", 0.3f);
         }
     }
     void End()
@@ -112,4 +120,5 @@ public class Player : MonoBehaviour
         // Ray 값을 변수에 저장 
         isBorder = Physics.Raycast(transform.position, transform.forward, 5, LayerMask.GetMask("Wall"));
     }
+
 }

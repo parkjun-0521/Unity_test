@@ -22,8 +22,8 @@ public class Enemy : MonoBehaviour
     void OnTriggerEnter( Collider other )
     {
         if(other.tag == "Attack") {
-
-            curHealtn -= Player.damage;
+            Player player = GameObject.Find("Player").GetComponent<Player>();
+            curHealtn -= player.damage;
 
             Debug.Log(curHealtn);
 
